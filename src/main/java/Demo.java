@@ -46,14 +46,14 @@ public class Demo {
                 @Override
                 public void run() {
                     // 模拟用户行为,每个用户访问10次
-                    for (int j = 0; j < 10; j++) {
-                        try {
+                    try {
+                        for (int j = 0; j < 10; j++) {
                             request();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } finally {
-                            countDownLatch.countDown();
                         }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } finally {
+                        countDownLatch.countDown();
                     }
                 }
             });
