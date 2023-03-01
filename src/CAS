@@ -1,7 +1,95 @@
-主要内容：
+一、主要内容：
 1.从网站计数器中一步一步实现CAS操作
 2.介绍Java中CAS及CAS可能存在的问题
 --------------------------------------------------------------
 
 需求: 开发一个网站, 需要对访问量进行统计, 用户每发送一次请求, 访问量+1, 如何实现?
       模拟有100人同时访问, 并且每个人对网站发起10次请求, 最后的访问次数应该是1000次.
+
+二、JDK CAS支持
+CAS 全称“CompareAndSwap” 比较并交换
+
+定义：
+    compare and swap，解决多线程并行情况下使用锁造成性能损耗的一种机制，
+    CAS操作包含三个操作数——内存位置（V）、预期原值（A）和新值(B)。如果内存位置的值与预期原值相匹配，
+    那么处理器会自动将该位置值更新为新值。否则，处理器不做任何操作。
+    无论哪种情况，它都会在CAS指令之前返回该位置的值。
+    CAS有效地说明了“我认为位置V应该包含值A；如果包含该值，则将B放到这个位置；否则，不要更改该位置，只告诉我这个位置现在的值即可。
+
+Q: 如何使用JDK提供的CAS支持？
+A: Java中提供了对CAS的支持，具体在sun.misc.unsafe类中, 声明如下：
+    public final boolean compareAndSwapObject(Object o, long offset, Object expected, Object x) {
+        return theInternalUnsafe.compareAndSetObject(o, offset, expected, x);
+    }
+
+    public final boolean compareAndSwapInt(Object o, long offset,  int expected, int x) {
+        return theInternalUnsafe.compareAndSetInt(o, offset, expected, x);
+    }
+
+    public final boolean compareAndSwapLong(Object o, long offset, long expected, long x) {
+        return theInternalUnsafe.compareAndSetLong(o, offset, expected, x);
+    }
+
+    Object o：表示要操作的对象
+    long offset：表示要操作对象中属性地址的偏移量
+    Object expected：表示需要修改数据的期望值
+    Object x：表示需要修改为的新值
+
+Q: CAS的实现原理是什么？
+A: CAS通过调用JNI的代码实现，JNI: Java Native Interface, 允许Java调用其他语言。
+而compareAndSwapXXX系列方法就是借助C语言调用CPU底层指令实现的。
+以常用的Inter x86平台来说，最终映射到CPU的指令为“cmpxchg”，这是一个原子指令，
+cpu执行此指令时，实现比较并交换操作。
+
+Q: 现在计算机动不动就上百核，cmpxchg如何保证多核心下的线程安全的？
+A: 系统底层进行CAS操作的时候，会判断当前系统是否是多核心系统。若是，则给“总线”加锁，
+只有一个线程会对总线加锁成功，加锁成功之后会执行CAS操作，
+也就是说CAS的原子性是平台级别的。
+
+CAS缺陷：
+
+Q: 什么是ABA问题？
+A: CAS需要在操作值的时候检查下值有没有发生变化，如果没有发生变化则更新，
+但是一个值是原来的A，在CAS方法执行之前，被其他线程修改成了B、然后又修改回了A，
+那么CAS方法执行检查的时候会发现它的值没有发生变化，但是实际变化了。这就是ABA问题。
+
+Q:
+A:
+
+Q:
+A:
+
+Q:
+A:
+
+Q:
+A:
+
+Q:
+A:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
