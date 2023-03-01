@@ -36,7 +36,7 @@ public class ABADemo02 {
                     Thread.sleep(20); // 确保Thread-main优先执行
                     a.compareAndSet(a.getReference(), (a.getReference() + 1), a.getStamp(), (a.getStamp() + 1)); // a+1, a=2
                     System.out.println("操作线程：" + Thread.currentThread().getName() + ", 【increment】，a = " + a.getReference());
-                    a.compareAndSet(a.getReference(), (a.getReference() - 1), a.getStamp(), (a.getStamp() + 1)); // a+1, a=2
+                    a.compareAndSet(a.getReference(), (a.getReference() - 1), a.getStamp(), (a.getStamp() + 1)); // a-1, a=1
                     System.out.println("操作线程：" + Thread.currentThread().getName() + ", 【decrement】，a = " + a.getReference());
                 } catch (InterruptedException e) {
                     e.printStackTrace();
