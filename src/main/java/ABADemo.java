@@ -32,9 +32,9 @@ public class ABADemo {
             public void run() {
                 try {
                     Thread.sleep(20); // 确保Thread-main优先执行
-                    a.incrementAndGet();
+                    a.incrementAndGet(); // a+1, a=2
                     System.out.println("操作线程：" + Thread.currentThread().getName() + ", 【increment】，a = " + a.get());
-                    a.decrementAndGet();
+                    a.decrementAndGet(); // a-1, a=1
                     System.out.println("操作线程：" + Thread.currentThread().getName() + ", 【decrement】，a = " + a.get());
                 } catch (InterruptedException e) {
                     e.printStackTrace();

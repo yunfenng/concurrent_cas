@@ -53,20 +53,16 @@ A: CAS需要在操作值的时候检查下值有没有发生变化，如果没�
 但是一个值是原来的A，在CAS方法执行之前，被其他线程修改成了B、然后又修改回了A，
 那么CAS方法执行检查的时候会发现它的值没有发生变化，但是实际变化了。这就是ABA问题。
 
-Q:
-A:
+提示：模拟ABA问题 ABADemo
 
-Q:
-A:
+Q: 如何解决ABA问题?
+A: 解决ABA问题最简单的方案就是给值加一个修改版本号, 每次值变化,都会修改它的版本号,
+CAS操作时都去对比此版本号
 
-Q:
-A:
+Java中ABA问题解决方法（AtomicStampedReference）
+AtomicStampedReference主要包含一个对象引用及一个自动更新的整数“stamp”的pair对象来解决ABA问题
 
-Q:
-A:
-
-Q:
-A:
+提示：使用AtomicStampedReference修改ABA bug
 
 
 
