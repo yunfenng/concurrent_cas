@@ -1,3 +1,5 @@
+package cn.jaa.cas;
+
 import java.util.concurrent.atomic.AtomicStampedReference;
 
 /**

@@ -1,3 +1,5 @@
+package cn.jaa.cas;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -6,13 +8,30 @@ import java.util.concurrent.TimeUnit;
  * @Date: 2023/2/28 8:56
  * @Description:
  */
-public class Demo {
+public class Demo02 {
 
     // 总访问量
-    static int count = 0;
+    volatile static int count = 0;
 
+    /**
+     * Q: 耗时太长的原因是什么？
+     * A: 程序中的request方法使用了synchronized关键字修饰，保证并发的情况下，request方法同一时刻只允许
+     * 一个线程进入，request加锁相当于串行执行了，count的结果与我们的与其一致，只是耗时太长了
+     *
+     * Q：如何解决耗时长的问题？
+     * A: count++ 操作实际上有3步完成! (jvm执行引擎)
+     *      1. 获取count的值,记录: A = count
+     *      2. 将A值+1, 得到B: B = A + 1
+     *      3. 将B值赋给count
+     *      升级第3步的实现：
+     *          1. 获取锁
+     *          2. 获取count的最新的值，记作LV
+     *          3. 判断LV是否等于A，若相等，则将B的值赋给count，返回true，否则返回false
+     *          4. 释放锁
+     *
+     */
     // 模拟访问的方法
-    public static void request() throws InterruptedException {
+    public /*synchronized*/ static void request() throws InterruptedException {
         TimeUnit.MILLISECONDS.sleep(5);
         /**
          * Q: 问题出在哪里?
@@ -32,7 +51,30 @@ public class Demo {
          * A: java中synchronized关键字和ReentrantLock都可以实现对资源加锁, 保证并发正确性
          * 多线程的情况下,可以保证被锁定的资源被“串行”访问
          */
-        count++;
+        // count++;
+        int expectCount; // 期望值
+        while (!compareAndSwap((expectCount = getCount()), expectCount + 1)) {
+
+        }
+    }
+
+    /**
+     *
+     * @param expectCount 期望值count
+     * @param newCount    需要给count赋值的新值
+     * @return            成功返回 true，失败返回 false
+     */
+    public static synchronized boolean compareAndSwap(int expectCount, int newCount) {
+        // 判断count当前值是否和期望值expectCount一致, 如果一致, 将newCount赋值给count
+        if (getCount() == expectCount) {
+            count = newCount;
+            return true;
+        }
+        return false;
+    }
+
+    public static int getCount() {
+        return count;
     }
 
     public static void main(String[] args) throws InterruptedException {

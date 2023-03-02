@@ -1,3 +1,5 @@
+package cn.jaa.cas;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -6,7 +8,7 @@ import java.util.concurrent.TimeUnit;
  * @Date: 2023/2/28 8:56
  * @Description:
  */
-public class Demo02 {
+public class Demo03 {
 
     // 总访问量
     volatile static int count = 0;
